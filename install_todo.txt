@@ -1,0 +1,89 @@
+
+- make virtual enviroment
+ * windowd용 : python -m venv "envname"
+ * cd "envename"/Scripts 
+ * activate
+- install library
+ * pip install django
+ * pip install djangorestframework
+ * pip install django-cors-headers
+ * pip install djoser
+ * pip install pillow
+ * pip install stripe
+ * pip install djongo
+- libaray export
+ * pip freeze > requirements.txt
+
+[django setting]
+- django-admin startproject "projectname"
+- settings.py modify
+ * insert to INSTALLED_APPS   
+  'rest_framework',
+  'rest_framework.authtoken',
+  'corsheaders',
+  'djoser',
+ * insert cors
+   CORS_ALLOWED_ORIGINS = ["http://localhost:8080"]
+   Middleware = ['corsheaders.middleware.CorsMiddleware']
+## CORS는 도메인 또는 포트가 다른 서버의 자원을 요청하는 매커니즘, 대부분 ajax를 통한 데이터 송수신을
+   하는데, 다른 도메인을 가진 서버의 url을 호출해 데이터를 가져오려고 하는 경우 cross domain이슈를
+   발생시킨다. javascript에서는 동일 출처 정책이라는 정책을 사용하여 다른 서버로부터 요청을 받으면
+   보안 문제로 간주하고 CORS이슈를 발생시켜 이를 차단한다. 
+   자세한 설명은 https://oen-blog.tistory.com/46 ##
+## CORS에 대한 이해는 https://developer.mozilla.org/ko/docs/Web/HTTP/CORS ##
+- urls.py modify
+ * path('api/v1/', include('djoser.urls')),
+   path('api/v1/', include('djoser.urls.authtoken')),
+- django DB initaliz
+ * python manage.py makemigration
+ * python manage.py migrate
+ * if successfully mgirated then you can see that message
+   Applying auth.0002_alter_permission_name_max_length... OK
+   Applying auth.0003_alter_user_email_max_length... OK
+   Applying auth.0004_alter_user_username_opts... OK
+   Applying auth.0005_alter_user_last_login_null... OK
+   Applying auth.0006_require_contenttypes_0002... OK
+   Applying auth.0007_alter_validators_add_error_messages... OK
+   Applying auth.0008_alter_user_username_max_length... OK
+   Applying auth.0009_alter_user_last_name_max_length... OK
+   Applying auth.0010_alter_group_name_max_length... OK
+   Applying auth.0011_update_proxy_permissions... OK
+   Applying auth.0012_alter_user_first_name_max_length... OK
+   Applying authtoken.0001_initial... OK
+   Applying authtoken.0002_auto_20160226_1747... OK
+   Applying authtoken.0003_tokenproxy... OK
+ * python manage.py createsuperuser
+- run django
+ * python manage.py runserver
+
+ [Vue setting]
+
+- install vuecli
+
+- create vue project
+ * vue create "projectname"
+ * choose Manually select features
+ * check chosse Vue version, Babel, Router, Vuex, CSS pre-processors
+   check out Linter / Formatter
+ * choose Saas/SCSS with dart-sass
+ * choose in dedicated config files
+- install bluma
+ * npm install bluma
+
+## core-js 오류 해결법 
+yarn add core-js, 
+npm install core-js, 
+npm install --save core-js, 
+restart npm run serve 하기## 
+ 
+
+Need to study
+1. bulma componet understand and how to customize them
+2. v-bind, v-for etc.. what is function do !
+3. vue's speacial tag is what diffrent for example template, router-link, nav etc..
+4. what means aria-hidden
+
+
+
+
+
