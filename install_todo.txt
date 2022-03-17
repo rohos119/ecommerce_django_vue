@@ -58,6 +58,7 @@
 
  [Vue setting]
 
+- install yarn
 - install vuecli
 
 - create vue project
