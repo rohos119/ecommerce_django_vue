@@ -1,11 +1,17 @@
+from unicodedata import category
 import scrapy
 from random import randrange
 import datetime
 import os
 from ..items import CrawlSpaItem 
 from playwright.async_api import async_playwright
+from bson.objectid import ObjectId
+import json 
+from pymongo import MongoClient
+
 
 class SpaoSpider(scrapy.Spider):
+    client = MongoClient('mongodb+srv://beoomtrack:beoomtrack@cluster0.wouwh.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
     name = 'spao'
     allowed_domains = ['spao.com']
     start_urls = ['https://spao.com']
@@ -42,6 +48,69 @@ class SpaoSpider(scrapy.Spider):
                 'womenbag' : 'https://spao.com/category/%EA%B0%80%EB%B0%A9/69/'
             },
         },
+        'spao_cate' :{
+            "manouter": { 
+                        "_id" : ObjectId("623eabf9fa4d75ce471b59a4"), 
+                        "id" : 2, 
+                        "name" : "manouter", 
+                        "slug" : "manouter"
+                        },
+             "mantop": { 
+                        "_id" : ObjectId("623eac06fa4d75ce471b59a6"), 
+                        "id" : 3, 
+                        "name" : "mantop", 
+                        "slug" : "mantop"
+                        },
+            "manbottom":{ 
+                        "_id" : ObjectId("623eac11fa4d75ce471b59a8"), 
+                        "id" : 4, 
+                        "name" : "manbottom", 
+                        "slug" : "manbottom"
+                        },
+            "manshoes":{ 
+                        "_id" : ObjectId("623eac1bfa4d75ce471b59aa"), 
+                        "id" : 5, 
+                        "name" : "manshoes", 
+                        "slug" : "manshoes"
+                        },
+            "manbag":{ 
+                        "_id" : ObjectId("623eac24fa4d75ce471b59ac"), 
+                        "id" : 6, 
+                        "name" : "manbag", 
+                        "slug" : "manbag"
+                    },
+            "womenouter":{ 
+                        "_id" : ObjectId("623eac3dfa4d75ce471b59ae"), 
+                        "id" : 7, 
+                        "name" : "womenouter", 
+                        "slug" : "womenouter"
+                    },
+            "womenbag" :{ 
+                        "_id" : ObjectId("623eac6bfa4d75ce471b59b1"), 
+                        "id" : 8, 
+                        "name" : "womenbag", 
+                        "slug" : "womenbag"
+                    },
+            "womenbottom":{ 
+                        "_id" : ObjectId("623eac74fa4d75ce471b59b3"), 
+                        "id" : 9, 
+                        "name" : "womenbottom", 
+                        "slug" : "womenbottom"
+                    },
+            "womentop":{ 
+                        "_id" : ObjectId("623eac7dfa4d75ce471b59b5"), 
+                        "id" : 10, 
+                        "name" : "womentop", 
+                        "slug" : "womentop"
+                    },
+            "womenshoes":{ 
+                        "_id" : ObjectId("623eac9bfa4d75ce471b59b7"), 
+                        "id" : 11, 
+                        "name" : "womenshoes", 
+                        "slug" : "womenshoes"
+                    }
+
+        }
     }             
     
     # 동적 banner crawl 수정필요
@@ -52,7 +121,7 @@ class SpaoSpider(scrapy.Spider):
     #         await page.goto("https://spao.com")
     #         title = await page.title()
     #         return {"title": title}
-
+ 
     def parse(self, response):        
         yield scrapy.Request(url=self.flag['spaocom_cat']['man_main_cat'], 
                             callback = self.parse_man_cat, 
@@ -69,17 +138,15 @@ class SpaoSpider(scrapy.Spider):
     def parse_women_cat(self, response):
         for key, value in self.flag['spaocom_cat']['women_cat'].items() :
             yield scrapy.Request(url=value, callback=self.parse_items, meta={'prdCate' : key,'page' : 1}, dont_filter = True) 
-
-       
     
     def parse_items(self,response):
         today = datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S') 
         prdImgLink = response.css('div.mcontent>div>div>ul.prdList>li>div>div>div.prdImg>a::attr(href)').getall()
         prdTitle = response.css('div.mcontent>div>div>ul.prdList>li>div>div>div.prdImg>a>img::attr(alt)').getall()
         prdImgUrl= response.css('div.mcontent>div>div>ul.prdList>li>div>div>div.prdImg>a>img::attr(src)').getall()
-        prdSalePrice = response.css('div.mcontent>div>div>ul.prdList>li>div>div.description>div>span.price ::text').getall()
-        prdOriginPrice = response.css('div.mcontent>div>div>ul.prdList>li>div>div.description>div>span.custom ::text').getall()
-        if response.css('a.last::attr(href)') :
+        prdSalePrice = [int(pSP.replace(',' , '')) for pSP in response.css('div.mcontent>div>div>ul.prdList>li>div>div.description>div>span.price ::text').getall()]
+        prdOriginPrice = [int(pOP.replace(',' , '')) for pOP in response.css('div.mcontent>div>div>ul.prdList>li>div>div.description>div>span.custom ::text').getall()]
+        if response.css('a.last::attr(href)').get() != '#none' :
             last_page = response.css('a.last::attr(href)').get().split('=')[-1]
         else :
             last_page = 1
@@ -93,19 +160,36 @@ class SpaoSpider(scrapy.Spider):
             
         for i in range (0,len(prdImgLink)):
             item=CrawlSpaItem()
-            item['update'] = today
-            item['prdCate'] = response.meta['prdCate']
-            item['prdImgLink'] = 'https://spao.com'+prdImgLink[i]
-            item['prdImgUrl'] = "https:"+prdImgUrl[i]
-            item['prdTitle'] = prdTitle[i]
-            item['prdOriginPrice'] = prdOriginPrice[i]
-            item['prdSalePrice'] = prdSalePrice[i]
-            yield scrapy.Request(url=item['prdImgLink'],callback=self.parse_detail, meta ={'item':item}, dont_filter=True)
+            
+            item["update"] = today
+            item["prdCate"] = {}
+            item["prdCate"]["_id"] = self.flag['spao_cate'][response.meta['prdCate']]["_id"]
+            item["prdImgLink"] = "https://spao.com"+prdImgLink[i]
+            item["prdImgUrl"] = "https:"+prdImgUrl[i]
+            item["prdTitle"] = prdTitle[i]
+            item["prdOriginPrice"] = prdOriginPrice[i]
+            item["prdSalePrice"] = prdSalePrice[i]
+            item["prdBrand"] = 'SPAO'
+            yield scrapy.Request(url=item["prdImgLink"],callback=self.parse_detail, meta ={'item':item}, dont_filter=True)
     
     def parse_detail(self, response) : 
         item = response.meta['item']
-        item['prdDetailThumb'] = response.css('div.cboth.detailArea>div>ul>li>img::attr(src)').getall()
-        item['prdDetailImg'] = response.css('div.cont>p>img::attr(src)').getall()
+        item["prdDetailThumbs"] = []
+        item["prdDetailImgs"] =[]
+        for pDT in response.css('div.cboth.detailArea>div>ul>li>img::attr(src)').getall() :
+            prdDetailThumb = {"detailThumb" : "http:"+pDT }
+            item["prdDetailThumbs"].append(prdDetailThumb)
 
+        for pDI in response.css('div.cont>p>img::attr(src)').getall() :
+            if pDI[0] !='/' :
+                prdDetailImg = {"detailImg" : pDI} 
+            else : 
+                prdDetailImg = {"detailImg" : "https://spao.com"+pDI}
+            item["prdDetailImgs"].append(prdDetailImg) 
+        
+
+        
+        db = self.client.ecommerce_mongodb.manproduct_product
+        db.insert_one(dict(item))
         yield item
-            
+        

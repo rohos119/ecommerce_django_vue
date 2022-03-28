@@ -1,0 +1,60 @@
+{ 
+    "_id" : ObjectId("623eabf9fa4d75ce471b59a4"), 
+    "id" : NumberInt(2), 
+    "name" : "manouter", 
+    "slug" : "manouter"
+}
+{ 
+    "_id" : ObjectId("623eac06fa4d75ce471b59a6"), 
+    "id" : NumberInt(3), 
+    "name" : "mantop", 
+    "slug" : "mantop"
+}
+{ 
+    "_id" : ObjectId("623eac11fa4d75ce471b59a8"), 
+    "id" : NumberInt(4), 
+    "name" : "manbottom", 
+    "slug" : "manbottom"
+}
+{ 
+    "_id" : ObjectId("623eac1bfa4d75ce471b59aa"), 
+    "id" : NumberInt(5), 
+    "name" : "manshoes", 
+    "slug" : "manshoes"
+}
+{ 
+    "_id" : ObjectId("623eac24fa4d75ce471b59ac"), 
+    "id" : NumberInt(6), 
+    "name" : "manbag", 
+    "slug" : "manbag"
+}
+{ 
+    "_id" : ObjectId("623eac3dfa4d75ce471b59ae"), 
+    "id" : NumberInt(7), 
+    "name" : "womenouter", 
+    "slug" : "womenouter"
+}
+{ 
+    "_id" : ObjectId("623eac6bfa4d75ce471b59b1"), 
+    "id" : NumberInt(8), 
+    "name" : "womenbag", 
+    "slug" : "womenbag"
+}
+{ 
+    "_id" : ObjectId("623eac74fa4d75ce471b59b3"), 
+    "id" : NumberInt(9), 
+    "name" : "womenbottom", 
+    "slug" : "womenbottom"
+}
+{ 
+    "_id" : ObjectId("623eac7dfa4d75ce471b59b5"), 
+    "id" : NumberInt(10), 
+    "name" : "womentop", 
+    "slug" : "womentop"
+}
+{ 
+    "_id" : ObjectId("623eac9bfa4d75ce471b59b7"), 
+    "id" : NumberInt(11), 
+    "name" : "womenshoes", 
+    "slug" : "womenshoes"
+}

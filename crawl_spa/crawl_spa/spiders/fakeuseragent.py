@@ -1,5 +1,6 @@
 import scrapy
 
+
 class FakeuseragentSpider(scrapy.Spider):
     name = 'fakeuseragent'
     start_urls = ["http://quotes.toscrape.com/"]
